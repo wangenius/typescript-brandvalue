@@ -12,19 +12,6 @@ npm install
 npx ts-node src/example.ts
 ```
 
-### 2.1 启动API服务器
-```bash
-npm run server
-```
-服务器将在 http://localhost:3000 启动
-
-### 2.2 测试HTTP API
-```bash
-# 在另一个终端窗口运行
-npm run test-api
-```
-自动测试所有API接口，使用input.json数据
-
 ### 3. 使用方式
 
 #### 3.1 直接调用
@@ -66,6 +53,9 @@ curl -X POST http://localhost:3000/api/brand/evaluate \
 curl http://localhost:3000/health
 
 ```
+
+
+> LLM 中的 provider 使用的是 2233.ai 的地址。 如有需要自行切换
 
 ### 4. 输入数据格式 (Input)
 ```typescript
