@@ -90,7 +90,7 @@ ${brandDataJson}
 `;
 
     try {
-      const report = await this.llm.text(prompt, { temperature: 0.5 });
+      const report = await this.llm.text(prompt);
       return report;
     } catch (error) {
       console.error("生成一致性分析报告失败:", error);

@@ -40,4 +40,5 @@ export type { BrandValuationResult, ComprehensiveReport } from './types/Evaluati
 export { BrandZCalculator } from './core/BrandZCalculator';
 export { LLM } from './core/LLM';
 export { BrandConsistencyEvaluator } from './core/ConsistencyEvaluator';
-export { BrandContentAnalyzer } from './core/ConsistencyAnalyzer'; 
+export { BrandContentAnalyzer } from './core/ConsistencyAnalyzer';
+export { BrandAssetGenerator, generateBrandAsset } from './core/BrandAssetGenerator';
