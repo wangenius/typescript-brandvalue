@@ -62,14 +62,9 @@ curl -X POST http://localhost:3000/api/brand/evaluate \
   -H "Content-Type: application/json" \
   -d @src/input.json
 
-# 获取示例数据
-curl http://localhost:3000/api/brand/example
-
 # 健康检查
 curl http://localhost:3000/health
 
-# API文档
-curl http://localhost:3000/api/docs
 ```
 
 ### 4. 输入数据格式 (Input)
