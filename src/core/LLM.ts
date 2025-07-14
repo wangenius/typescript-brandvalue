@@ -1,3 +1,8 @@
+import * as dotenv from 'dotenv';
+
+// 加载环境变量
+dotenv.config();
+
 /**
  * 简化的LLM接口 - TypeScript版本
  * 提供简单易用的大模型调用接口
@@ -30,7 +35,7 @@ export class LLM {
    */
   private loadFromEnv(): LLMConfig {
     return {
-      api_key: process.env.LLM_API_KEY || "sk-ynBe25e730f98e8901868125a5dd1465816adac6c64paEH5",
+      api_key: process.env.LLM_API_KEY || "",
       model: process.env.LLM_MODEL || "gemini-2.5-flash-preview",
       base_url: process.env.LLM_BASE_URL || "https://api.gptsapi.net/v1",
       temperature: parseFloat(process.env.OPENAI_TEMPERATURE || "0.3"),
@@ -276,4 +281,4 @@ export class LLM {
 建议您提供更具体的品牌数据，以便我进行更深入的分析。`;
     }
   }
-} 
+}
