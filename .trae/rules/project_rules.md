@@ -1,0 +1,4 @@
+
+1. example.ts 是测试模块
+2. 不要随意增加模块
+3. 使用 npx ts-node src/example.ts 来测试。
