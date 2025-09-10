@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 export interface Task {
   id: string;
   status: 'pending' | 'in_progress' | 'completed' | 'failed';
@@ -16,6 +19,44 @@ export interface Task {
 
 class TaskManager {
   private tasks = new Map<string, Task>();
+  private dataFile = path.join(process.cwd(), 'data', 'tasks.json');
+
+  constructor() {
+    this.loadTasks();
+  }
+
+  private loadTasks(): void {
+    try {
+      const dataDir = path.dirname(this.dataFile);
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+
+      if (fs.existsSync(this.dataFile)) {
+        const data = fs.readFileSync(this.dataFile, 'utf8');
+        const tasksArray = JSON.parse(data);
+        this.tasks = new Map(tasksArray.map((task: any) => [
+          task.id,
+          {
+            ...task,
+            createdAt: new Date(task.createdAt),
+            updatedAt: new Date(task.updatedAt)
+          }
+        ]));
+      }
+    } catch (error) {
+      console.warn('Failed to load tasks from file:', error);
+    }
+  }
+
+  private saveTasks(): void {
+    try {
+      const tasksArray = Array.from(this.tasks.values());
+      fs.writeFileSync(this.dataFile, JSON.stringify(tasksArray, null, 2), 'utf8');
+    } catch (error) {
+      console.error('Failed to save tasks to file:', error);
+    }
+  }
 
   createTask(type: Task['type'], input?: any): string {
     const id = this.generateTaskId();
@@ -28,6 +69,7 @@ class TaskManager {
       input
     };
     this.tasks.set(id, task);
+    this.saveTasks();
     return id;
   }
 
@@ -44,6 +86,7 @@ class TaskManager {
         updatedAt: new Date(),
         ...updates
       });
+      this.saveTasks();
     }
   }
 
@@ -55,6 +98,7 @@ class TaskManager {
         progress,
         updatedAt: new Date()
       });
+      this.saveTasks();
     }
   }
 
@@ -67,6 +111,7 @@ class TaskManager {
         result,
         updatedAt: new Date()
       });
+      this.saveTasks();
     }
   }
 
@@ -79,6 +124,7 @@ class TaskManager {
         error,
         updatedAt: new Date()
       });
+      this.saveTasks();
     }
   }
 

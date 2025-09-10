@@ -20,27 +20,18 @@ export class BrandAssetGenerator {
       console.log("✅ 基本品牌信息生成完成");
       console.log("基本品牌信息:", basicInfo);
 
-      // 步骤2：生成品牌定位
-      const positioning = await this.generateBrandPositioning(
-        content,
-        basicInfo.brand_name
-      );
+      // 步骤2-4：并行生成品牌定位、表达和用户画像（性能优化）
+      console.log("🚀 开始并行生成品牌定位、表达和用户画像...");
+      const [positioning, expression, personas] = await Promise.all([
+        this.generateBrandPositioning(content, basicInfo.brand_name),
+        this.generateBrandExpression(content, basicInfo.brand_name),
+        this.generateUserPersonas(content, basicInfo.brand_name)
+      ]);
+      
       console.log("✅ 品牌定位生成完成");
       console.log("品牌定位:", positioning);
-
-      // 步骤3：生成品牌表达
-      const expression = await this.generateBrandExpression(
-        content,
-        basicInfo.brand_name
-      );
       console.log("✅ 品牌表达生成完成");
       console.log("品牌表达:", expression);
-
-      // 步骤4：生成用户画像
-      const personas = await this.generateUserPersonas(
-        content,
-        basicInfo.brand_name
-      );
       console.log("✅ 用户画像生成完成");
       console.log("用户画像:", personas);
 

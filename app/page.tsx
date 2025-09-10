@@ -1,12 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, MessageCircle, BarChart, Award, CheckCircle } from 'lucide-react';
+import { useRouter } from "next/navigation";
+import { ArrowRight, MessageCircle, BarChart, Award, CheckCircle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 
 export default function HomePage() {
+  const [taskId, setTaskId] = useState('');
+  const router = useRouter();
+
+  const handleTaskSearch = () => {
+    if (taskId.trim()) {
+      router.push(`/task/${taskId.trim()}`);
+    }
+  };
+
   const features = [
     {
       icon: MessageCircle,
@@ -43,9 +54,31 @@ export default function HomePage() {
           <p className="text-xl text-muted-foreground mb-8">
             通过AI对话，快速评估您的品牌价值
           </p>
+          
+          {/* Task ID Search Section */}
+          <Card className="mb-8 max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle className="text-lg">查询任务状态</CardTitle>
+              <CardDescription>输入您的任务ID查看评估进度</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="输入任务ID (如: task_123456789_abc)"
+                  value={taskId}
+                  onChange={(e) => setTaskId(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleTaskSearch()}
+                />
+                <Button onClick={handleTaskSearch} size="icon">
+                  <Search className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           <Link href="/evaluation">
             <Button size="lg" className="gap-2">
-              开始评估
+              开始新评估
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
