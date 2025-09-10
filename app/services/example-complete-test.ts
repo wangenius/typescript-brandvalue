@@ -1,6 +1,6 @@
 /**
- * 完整品牌价值评估系统测试示例
- * 结合品牌资产生成和品牌价值评估功能的完整测试流程
+ * 完整品牌价值评测系统测试示例
+ * 结合品牌资产生成和品牌价值评测功能的完整测试流程
  */
 
 import { generateBrandAsset, brand_valuate, BrandInputData } from './index';
@@ -55,10 +55,10 @@ const brandContent = `
 `;
 
 /**
- * 完整的品牌评估测试流程
+ * 完整的品牌评测测试流程
  */
 async function runCompleteTest() {
-  console.log('🚀 === 完整品牌价值评估系统测试 ===\n');
+  console.log('🚀 === 完整品牌价值评测系统测试 ===\n');
   
   try {
     // ========== 第一步：品牌资产生成 ==========
@@ -80,36 +80,36 @@ async function runCompleteTest() {
     fs.writeFileSync(brandAssetPath, JSON.stringify(brandAsset, null, 2), 'utf-8');
     console.log('💾 品牌资产已保存到:', brandAssetPath);
     
-    // ========== 第二步：构建评估输入数据 ==========
-    console.log('\n📊 步骤2: 构建品牌价值评估输入数据');
+    // ========== 第二步：构建评测输入数据 ==========
+    console.log('\n📊 步骤2: 构建品牌价值评测输入数据');
     
-    console.log('✅ 评估输入数据构建完成');
+    console.log('✅ 评测输入数据构建完成');
     
-    // 保存评估输入数据
+    // 保存评测输入数据
     const inputDataPath = path.join(__dirname, 'complete_test_input.json');
     fs.writeFileSync(inputDataPath, JSON.stringify(brandAsset, null, 2), 'utf-8');
-    console.log('💾 评估输入数据已保存到:', inputDataPath);
+    console.log('💾 评测输入数据已保存到:', inputDataPath);
     
-    // ========== 第三步：品牌价值评估 ==========
-    console.log('\n🔍 步骤3: 执行品牌价值评估');
+    // ========== 第三步：品牌价值评测 ==========
+    console.log('\n🔍 步骤3: 执行品牌价值评测');
     console.log('正在进行综合品牌价值分析...');
     
     const evaluationResult = await brand_valuate(brandAsset);
     
     if (evaluationResult.success && evaluationResult.data) {
-      console.log('\n🎉 品牌价值评估完成！');
+      console.log('\n🎉 品牌价值评测完成！');
       
       // ========== 第四步：结果展示 ==========
-      console.log('\n📈 === 评估结果概览 ===');
+      console.log('\n📈 === 评测结果概览 ===');
       console.log('品牌名称:', evaluationResult.data.brand_name);
-      console.log('评估日期:', evaluationResult.data.evaluation_date);
+      console.log('评测日期:', evaluationResult.data.evaluation_date);
       console.log('品牌等级:', evaluationResult.data.brandz_evaluation.brand_grade);
       console.log('BrandZ价值:', evaluationResult.data.brandz_evaluation.brandz_value.toLocaleString(), '元');
       console.log('一致性等级:', evaluationResult.data.consistency_evaluation.grade);
       console.log('一致性得分:', evaluationResult.data.consistency_evaluation.total_score);
       
       console.log('\n📊 === 详细分析报告 ===');
-      console.log('\n🔄 一致性评估:');
+      console.log('\n🔄 一致性评测:');
       console.log(evaluationResult.data.consistency_evaluation.analysis_report);
       
       console.log('\n💰 财务分析报告:');
@@ -121,22 +121,22 @@ async function runCompleteTest() {
       console.log('\n📋 总体表现总结:');
       console.log(evaluationResult.data.evaluation_summary.overall_performance_summary);
       
-      // 保存完整评估结果
+      // 保存完整评测结果
       const resultPath = path.join(__dirname, 'complete_test_result.json');
       fs.writeFileSync(resultPath, JSON.stringify(evaluationResult.data, null, 2), 'utf-8');
-      console.log('\n💾 完整评估结果已保存到:', resultPath);
+      console.log('\n💾 完整评测结果已保存到:', resultPath);
       
       // ========== 第五步：测试总结 ==========
       console.log('\n🏆 === 测试总结 ===');
       console.log('✅ 品牌资产生成: 成功');
       console.log('✅ 数据格式转换: 成功');
-      console.log('✅ 品牌价值评估: 成功');
+      console.log('✅ 品牌价值评测: 成功');
       console.log('✅ 结果保存: 成功');
       
       console.log('\n📁 生成的文件:');
       console.log('- 品牌资产:', brandAssetPath);
-      console.log('- 评估输入:', inputDataPath);
-      console.log('- 评估结果:', resultPath);
+      console.log('- 评测输入:', inputDataPath);
+      console.log('- 评测结果:', resultPath);
       
       console.log('\n🎯 核心指标:');
       console.log(`- 品牌价值: ${evaluationResult.data.brandz_evaluation.brandz_value.toLocaleString()}元`);
@@ -145,7 +145,7 @@ async function runCompleteTest() {
       console.log(`- 一致性等级: ${evaluationResult.data.consistency_evaluation.grade}`);
       
     } else {
-      console.error('❌ 品牌价值评估失败:', evaluationResult.error);
+      console.error('❌ 品牌价值评测失败:', evaluationResult.error);
     }
     
   } catch (error) {
@@ -166,17 +166,17 @@ async function runComparisonTest() {
       const inputContent = fs.readFileSync(inputPath, 'utf-8');
       const existingInput: BrandInputData = JSON.parse(inputContent);
       
-      console.log('📄 使用现有input.json进行评估...');
+      console.log('📄 使用现有input.json进行评测...');
       const result = await brand_valuate(existingInput);
       
       if (result.success && result.data) {
-        console.log('\n📊 现有数据评估结果:');
+        console.log('\n📊 现有数据评测结果:');
         console.log('品牌名称:', result.data.brand_name);
         console.log('品牌等级:', result.data.brandz_evaluation.brand_grade);
         console.log('BrandZ价值:', result.data.brandz_evaluation.brandz_value.toLocaleString(), '元');
         console.log('一致性等级:', result.data.consistency_evaluation.grade);
       } else {
-        console.log('❌ 现有数据评估失败:', result.error);
+        console.log('❌ 现有数据评测失败:', result.error);
       }
     } else {
       console.log('⚠️  未找到input.json文件，跳过对比测试');

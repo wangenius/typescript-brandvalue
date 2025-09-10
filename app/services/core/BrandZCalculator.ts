@@ -31,15 +31,15 @@ export const BRANDZ_CONTRIBUTION_COMPONENT_WEIGHTS = {
 
 export class BrandZCalculator {
   /**
-   * 综合品牌评估
+   * 综合品牌评测
    */
   async evaluateBrandZ(
     brandData: BrandInputData
   ): Promise<ComprehensiveReport> {
-    // 1. 品牌一致性评估
+    // 1. 品牌一致性评测
     const consistencyResult = await this.evaluateConsistency(brandData);
 
-    // 2. BrandZ价值评估
+    // 2. BrandZ价值评测
     const brandzResult = await this.evaluateBrandZValue(
       brandData,
       consistencyResult.total_score
@@ -54,7 +54,7 @@ export class BrandZCalculator {
   }
 
   /**
-   * 公共方法：品牌一致性评估
+   * 公共方法：品牌一致性评测
    */
   async evaluateConsistencyPublic(
     brandData: BrandInputData
@@ -63,7 +63,7 @@ export class BrandZCalculator {
   }
 
   /**
-   * 公共方法：财务价值评估
+   * 公共方法：财务价值评测
    */
   evaluateFinancialValuePublic(brandData: BrandInputData): {
     revenue_performance: number;
@@ -74,7 +74,7 @@ export class BrandZCalculator {
   }
 
   /**
-   * 公共方法：MDS分数评估
+   * 公共方法：MDS分数评测
    */
   evaluateMDSScoresPublic(brandData: BrandInputData): {
     meaningful: number;
@@ -85,7 +85,7 @@ export class BrandZCalculator {
   }
 
   /**
-   * 评估品牌一致性（使用新的分析器和评估器）
+   * 评测品牌一致性（使用新的分析器和评测器）
    */
   public async evaluateConsistency(
     brandData: BrandInputData
@@ -98,7 +98,7 @@ export class BrandZCalculator {
       brandData
     );
 
-    // 2. 评估一致性
+    // 2. 评测一致性
     const consistencyResult = await consistencyEvaluator.evaluateBrandHouse(
       analysisResult.metrics,
       analysisResult.report
@@ -108,7 +108,7 @@ export class BrandZCalculator {
   }
 
   /**
-   * 评估BrandZ价值
+   * 评测BrandZ价值
    */
   public async evaluateBrandZValue(
     brandData: BrandInputData,
@@ -128,7 +128,7 @@ export class BrandZCalculator {
       brand_grade: "",
     };
 
-    // 1. 评估财务价值
+    // 1. 评测财务价值
     const financialScores = this.evaluateFinancialValue(brandData);
     result.revenue_performance = financialScores.revenue_performance;
     result.asset_efficiency = financialScores.asset_efficiency;
@@ -140,7 +140,7 @@ export class BrandZCalculator {
       Math.min(result.brand_multiple * 20, 100) *
         BRANDZ_COMPONENT_WEIGHTS.BRAND_MULTIPLE;
 
-    // 2. 评估品牌贡献
+    // 2. 评测品牌贡献
     const mdsScores = this.evaluateMDSScores(brandData);
     result.meaningful_score = mdsScores.meaningful;
     result.different_score = mdsScores.different;
@@ -164,7 +164,7 @@ export class BrandZCalculator {
     // 4. 确定品牌等级
     result.brand_grade = this.getBrandGrade(result.brandz_value);
 
-    // 5. 生成评估详情
+    // 5. 生成评测详情
     result.evaluation_details = this.generateEvaluationDetails(
       result,
       financialScores,
@@ -179,14 +179,14 @@ export class BrandZCalculator {
   }
 
   /**
-   * 评估财务价值
+   * 评测财务价值
    */
   public evaluateFinancialValue(brandData: BrandInputData): {
     revenue_performance: number;
     asset_efficiency: number;
     brand_multiple: number;
   } {
-    // 简化的财务评估，基于品牌资产信息
+    // 简化的财务评测，基于品牌资产信息
     const positioning = brandData.brand_assets.brand_image.brand_positioning;
     const mission = positioning.brand_mission.description;
     const value = positioning.description;
@@ -195,7 +195,7 @@ export class BrandZCalculator {
     let assetEfficiency = 70;
     let brandMultiple = 2.0;
 
-    // 基于定位评估收益表现
+    // 基于定位评测收益表现
     if (
       positioning.description.includes("领导") ||
       positioning.description.includes("领先")
@@ -203,12 +203,12 @@ export class BrandZCalculator {
       revenuePerformance += 20;
     }
 
-    // 基于使命评估资产效率
+    // 基于使命评测资产效率
     if (mission.includes("专业") || mission.includes("品质")) {
       assetEfficiency += 20;
     }
 
-    // 基于价值主张评估品牌倍数
+    // 基于价值主张评测品牌倍数
     if (value.includes("独特") || value.includes("创新")) {
       brandMultiple += 0.5;
     }
@@ -221,7 +221,7 @@ export class BrandZCalculator {
   }
 
   /**
-   * 评估MDS分数
+   * 评测MDS分数
    */
   public evaluateMDSScores(brandData: BrandInputData): {
     meaningful: number;
@@ -235,7 +235,7 @@ export class BrandZCalculator {
     let different = 70;
     let salient = 70;
 
-    // 评估有意义度
+    // 评测有意义度
     if (
       positioning.brand_mission.description.includes("价值") ||
       positioning.brand_mission.description.includes("意义")
@@ -243,7 +243,7 @@ export class BrandZCalculator {
       meaningful += 20;
     }
 
-    // 评估差异化度
+    // 评测差异化度
     if (
       positioning.description.includes("独特") ||
       positioning.description.includes("创新")
@@ -251,7 +251,7 @@ export class BrandZCalculator {
       different += 20;
     }
 
-    // 评估显著度
+    // 评测显著度
     if (expression.brand_slogan.slogan || expression.tone.description) {
       salient += 20;
     }
@@ -310,7 +310,7 @@ export class BrandZCalculator {
 品牌名称: ${brandData.brand_name}
 
 1. 收益表现: ${result.revenue_performance}/100
-   - 评估: ${
+   - 评测: ${
      result.revenue_performance > 80
        ? "优秀"
        : result.revenue_performance > 60
@@ -320,7 +320,7 @@ export class BrandZCalculator {
    - 建议: 提升市场竞争力，扩大市场份额
 
 2. 资产效率: ${result.asset_efficiency}/100
-   - 评估: ${
+   - 评测: ${
      result.asset_efficiency > 80
        ? "优秀"
        : result.asset_efficiency > 60
@@ -330,7 +330,7 @@ export class BrandZCalculator {
    - 建议: 优化资源配置，提高运营效率
 
 3. 品牌倍数: ${result.brand_multiple}
-   - 评估: ${
+   - 评测: ${
      result.brand_multiple > 3.0
        ? "优秀"
        : result.brand_multiple > 2.0
@@ -356,7 +356,7 @@ export class BrandZCalculator {
 品牌名称: ${brandData.brand_name}
 
 1. 有意义度 (Meaningful): ${result.meaningful_score}/100
-   - 评估: ${
+   - 评测: ${
      result.meaningful_score > 80
        ? "优秀"
        : result.meaningful_score > 60
@@ -366,7 +366,7 @@ export class BrandZCalculator {
    - 建议: 强化品牌价值主张，提升品牌意义
 
 2. 差异化度 (Different): ${result.different_score}/100
-   - 评估: ${
+   - 评测: ${
      result.different_score > 80
        ? "优秀"
        : result.different_score > 60
@@ -376,7 +376,7 @@ export class BrandZCalculator {
    - 建议: 突出品牌独特性，建立差异化优势
 
 3. 显著度 (Salient): ${result.salient_score}/100
-   - 评估: ${
+   - 评测: ${
      result.salient_score > 80
        ? "优秀"
        : result.salient_score > 60
@@ -386,7 +386,7 @@ export class BrandZCalculator {
    - 建议: 提升品牌知名度，增强品牌记忆点
 
 4. 一致性 (Consistency): ${result.consistency_score}/100
-   - 评估: ${
+   - 评测: ${
      result.consistency_score > 80
        ? "优秀"
        : result.consistency_score > 60
@@ -412,7 +412,7 @@ export class BrandZCalculator {
     const overallGrade = this.getBrandGrade(overallScore);
 
     return `
-品牌综合评估总结
+品牌综合评测总结
 
 品牌名称: ${brandData.brand_name}
 
@@ -440,7 +440,7 @@ export class BrandZCalculator {
   }
 
   /**
-   * 生成评估详情
+   * 生成评测详情
    */
   public generateEvaluationDetails(
     result: BrandZEvaluationResult,

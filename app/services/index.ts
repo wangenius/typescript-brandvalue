@@ -1,5 +1,5 @@
 /**
- * 品牌价值评估系统 - TypeScript版本
+ * 品牌价值评测系统 - TypeScript版本
  * 主要模块接口
  */
 
@@ -8,13 +8,13 @@ import { BrandValuationResult } from './types/EvaluationResult';
 import { BrandZCalculator } from './core/BrandZCalculator';
 
 /**
- * 品牌价值评估主函数
+ * 品牌价值评测主函数
  * @param input 品牌输入数据，格式参考input.json
- * @returns 评估结果
+ * @returns 评测结果
  */
 export async function brand_valuate(input: BrandInputData): Promise<BrandValuationResult> {
   try {
-    // 1. 品牌评估：使用BrandZ计算器进行综合评估
+    // 1. 品牌评测：使用BrandZ计算器进行综合评测
     const calculator = new BrandZCalculator();
     const comprehensiveReport = await calculator.evaluateBrandZ(input);
     

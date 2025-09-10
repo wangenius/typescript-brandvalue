@@ -31,7 +31,7 @@ export async function POST(
     // 分析当前任务进度
     const currentStep = task.progress?.step || 0;
     const isGenerationFailed = currentStep === 1; // 生成阶段失败
-    const isEvaluationFailed = currentStep === 2; // 评估阶段失败
+    const isEvaluationFailed = currentStep === 2; // 评测阶段失败
 
     // 更新任务状态为进行中，清除错误信息
     taskManager.updateTaskStatus(taskId, 'in_progress', { error: undefined });
@@ -85,7 +85,7 @@ export async function POST(
       // 获取最新的任务数据
       const updatedTask = taskManager.getTask(taskId);
       
-      // 2. 重新开始评估
+      // 2. 重新开始评测
       const evalResponse = await fetch(new URL('/api/brand/evaluate', req.url), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -98,10 +98,10 @@ export async function POST(
 
       if (!evalResponse.ok) {
         const error = await evalResponse.text();
-        throw new Error(`品牌评估失败: ${error}`);
+        throw new Error(`品牌评测失败: ${error}`);
       }
 
-      // 返回成功响应，评估将在后台继续
+      // 返回成功响应，评测将在后台继续
       return NextResponse.json({ 
         message: '任务重试已开始',
         taskId: taskId,

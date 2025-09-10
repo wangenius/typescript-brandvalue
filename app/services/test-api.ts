@@ -1,6 +1,6 @@
 /**
  * HTTP API测试脚本
- * 使用input.json数据测试品牌价值评估API
+ * 使用input.json数据测试品牌价值评测API
  */
 
 import axios from "axios";
@@ -39,10 +39,10 @@ async function checkHealth() {
   }
 }
 
-// 测试品牌价值评估API
+// 测试品牌价值评测API
 async function testBrandEvaluation(brandData: any) {
   try {
-    console.log("\n🎯 开始品牌价值评估测试...");
+    console.log("\n🎯 开始品牌价值评测测试...");
     console.log("测试品牌:", brandData.brand_name);
 
     const startTime = Date.now();
@@ -58,11 +58,11 @@ async function testBrandEvaluation(brandData: any) {
     const endTime = Date.now();
 
     if (response.data.success) {
-      console.log("✅ 品牌价值评估成功!");
-      console.log(`⏱️  评估耗时: ${endTime - startTime}ms`);
-      console.log("\n📊 评估结果摘要:");
+      console.log("✅ 品牌价值评测成功!");
+      console.log(`⏱️  评测耗时: ${endTime - startTime}ms`);
+      console.log("\n📊 评测结果摘要:");
       console.log("品牌名称:", response.data.data.brand_name);
-      console.log("评估日期:", response.data.data.evaluation_date);
+      console.log("评测日期:", response.data.data.evaluation_date);
       console.log(
         "品牌等级:",
         response.data.data.brandz_evaluation.brand_grade
@@ -91,7 +91,7 @@ async function testBrandEvaluation(brandData: any) {
 
       return response.data;
     } else {
-      console.error("❌ 品牌价值评估失败:", response.data.error);
+      console.error("❌ 品牌价值评测失败:", response.data.error);
       return null;
     }
   } catch (error) {
@@ -124,7 +124,7 @@ async function runTests() {
   // 加载测试数据
   const testData = loadTestData();
 
-  // 执行品牌评估测试
+  // 执行品牌评测测试
   const result = await testBrandEvaluation(testData);
 
   console.log("\n" + "=".repeat(50));

@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
             const initialProgress = {
               step: 0,
               totalSteps: 3,
-              status: "开始品牌评估",
+              status: "开始品牌评测",
               progress: 0,
             };
             if (taskId) {
@@ -73,12 +73,12 @@ export async function POST(req: NextRequest) {
             }
             safeEnqueue(`data: ${JSON.stringify(initialProgress)}\n\n`);
 
-            // 步骤1：品牌一致性评估
+            // 步骤1：品牌一致性评测
             safeEnqueue(
               `data: ${JSON.stringify({
                 step: 1,
                 totalSteps: 3,
-                status: "正在进行品牌一致性评估...",
+                status: "正在进行品牌一致性评测...",
                 progress: 10,
               })}\n\n`
             );
@@ -95,19 +95,19 @@ export async function POST(req: NextRequest) {
               `data: ${JSON.stringify({
                 step: 1,
                 totalSteps: 3,
-                status: `✅ 品牌一致性评估完成 (用时${consistencyTime}秒)`,
+                status: `✅ 品牌一致性评测完成 (用时${consistencyTime}秒)`,
                 progress: 40,
                 data: { consistencyResult },
                 timing: { consistencyTime: consistencyTime },
               })}\n\n`
             );
 
-            // 步骤2：BrandZ价值评估
+            // 步骤2：BrandZ价值评测
             safeEnqueue(
               `data: ${JSON.stringify({
                 step: 2,
                 totalSteps: 3,
-                status: "正在进行BrandZ价值评估...",
+                status: "正在进行BrandZ价值评测...",
                 progress: 50,
               })}\n\n`
             );
@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
               `data: ${JSON.stringify({
                 step: 2,
                 totalSteps: 3,
-                status: `✅ BrandZ价值评估完成 (用时${brandzTime}秒)`,
+                status: `✅ BrandZ价值评测完成 (用时${brandzTime}秒)`,
                 progress: 75,
                 data: { brandzResult },
                 timing: { brandzTime: brandzTime },
@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
             const finalResult = {
               step: 3,
               totalSteps: 3,
-              status: `✅ 品牌评估完成 (总用时${totalTime}秒)`,
+              status: `✅ 品牌评测完成 (总用时${totalTime}秒)`,
               progress: 100,
               completed: true,
               data: comprehensiveReport,
@@ -181,12 +181,12 @@ export async function POST(req: NextRequest) {
               if (taskId) {
                 taskManager.setTaskError(
                   taskId,
-                  error?.message || "品牌评估失败"
+                  error?.message || "品牌评测失败"
                 );
               }
               safeEnqueue(
                 `data: ${JSON.stringify({
-                  error: error?.message || "品牌评估失败",
+                  error: error?.message || "品牌评测失败",
                 })}\n\n`
               );
             } catch (controllerError) {
@@ -209,10 +209,10 @@ export async function POST(req: NextRequest) {
     }
 
     // 非流式返回（保持原有逻辑）
-    // 1. 品牌一致性评估
+    // 1. 品牌一致性评测
     const consistencyResult = await calculator.evaluateConsistency(body);
 
-    // 2. BrandZ价值评估
+    // 2. BrandZ价值评测
     const brandzResult = await calculator.evaluateBrandZValue(
       body,
       consistencyResult.total_score

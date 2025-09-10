@@ -98,8 +98,8 @@ async function testBrandGeneratorAPI() {
       fs.writeFileSync(outputPath, JSON.stringify(generateData.data, null, 2));
       console.log('\n💾 完整结果已保存到:', outputPath);
       
-      // 3. 测试生成的数据是否可以用于品牌评估
-      console.log('\n3. 测试生成的品牌资产是否可用于评估...');
+      // 3. 测试生成的数据是否可以用于品牌评测
+      console.log('\n3. 测试生成的品牌资产是否可用于评测...');
       const evaluateResponse = await axios.post(`${API_BASE_URL}/api/brand/evaluate`, generateData.data, {
         headers: {
           'Content-Type': 'application/json'
@@ -109,13 +109,13 @@ async function testBrandGeneratorAPI() {
       const evaluateData = evaluateResponse.data;
       
       if (evaluateData.success) {
-        console.log('✅ 生成的品牌资产可以成功用于评估！');
-        console.log('- 一致性评估分数:', evaluateData.data.consistency_evaluation.total_score);
+        console.log('✅ 生成的品牌资产可以成功用于评测！');
+        console.log('- 一致性评测分数:', evaluateData.data.consistency_evaluation.total_score);
         console.log('- 一致性等级:', evaluateData.data.consistency_evaluation.grade);
         console.log('- BrandZ价值:', evaluateData.data.brandz_evaluation.brandz_value);
         console.log('- 品牌等级:', evaluateData.data.brandz_evaluation.brand_grade);
       } else {
-        console.log('❌ 评估失败:', evaluateData.error);
+        console.log('❌ 评测失败:', evaluateData.error);
       }
       
     } else {

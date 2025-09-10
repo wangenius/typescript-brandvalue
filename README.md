@@ -1,4 +1,4 @@
-# 品牌价值评估系统
+# 品牌价值评测系统
 
 ## 使用方法
 
@@ -16,9 +16,9 @@ cp .env-example .env
 
 ### 3. 运行测试示例
 
-#### 3.1 品牌价值评估示例
+#### 3.1 品牌价值评测示例
 ```bash
-# 使用现有input.json数据进行品牌价值评估
+# 使用现有input.json数据进行品牌价值评测
 npx ts-node src/example-brand-calculator.ts
 ```
 
@@ -30,13 +30,13 @@ npx ts-node src/example-brand-generator.ts
 
 #### 3.3 完整测试流程
 ```bash
-# 运行完整的品牌资产生成 + 价值评估流程
+# 运行完整的品牌资产生成 + 价值评测流程
 npx ts-node src/example-complete-test.ts
 ```
 
 ### 4. 使用方式
 
-#### 4.1 品牌价值评估
+#### 4.1 品牌价值评测
 
 **方式一：使用现有品牌资产数据**
 ```typescript
@@ -46,13 +46,13 @@ import { brand_valuate, BrandInputData } from './src/index';
 const result = await brand_valuate(brandData);
 
 if (result.success) {
-  console.log('评估结果:', result.data);
+  console.log('评测结果:', result.data);
 } else {
-  console.error('评估失败:', result.error);
+  console.error('评测失败:', result.error);
 }
 ```
 
-**方式二：从品牌描述生成资产并评估**
+**方式二：从品牌描述生成资产并评测**
 ```typescript
 import { generateBrandAsset, brand_valuate } from './src/index';
 
@@ -64,7 +64,7 @@ const brandContent = `
 
 const brandAsset = await generateBrandAsset(brandContent);
 
-// 2. 使用生成的品牌资产进行价值评估
+// 2. 使用生成的品牌资产进行价值评测
 const result = await brand_valuate(brandAsset);
 
 if (result.success) {
@@ -72,7 +72,7 @@ if (result.success) {
   console.log('品牌等级:', result.data.brandz_evaluation.brand_grade);
   console.log('一致性等级:', result.data.consistency_evaluation.grade);
 } else {
-  console.error('评估失败:', result.error);
+  console.error('评测失败:', result.error);
 }
 ```
 
@@ -119,7 +119,7 @@ npm run test-api
 # 启动服务器
 npm run server
 
-# 品牌价值评估
+# 品牌价值评测
 curl -X POST http://localhost:3000/api/brand/evaluate \
   -H "Content-Type: application/json" \
   -d @src/input.json
@@ -137,11 +137,11 @@ curl http://localhost:3000/health
 **输入**: 品牌描述文本（包含品牌理念、目标用户、调性等信息）
 **输出**: 结构化的BrandInputData对象
 
-#### 5.2 品牌价值评估 (brand_valuate)
-对品牌资产进行综合评估，包括一致性分析和BrandZ价值计算。
+#### 5.2 品牌价值评测 (brand_valuate)
+对品牌资产进行综合评测，包括一致性分析和BrandZ价值计算。
 
 **输入**: BrandInputData对象
-**输出**: 包含品牌价值、等级、详细报告的评估结果
+**输出**: 包含品牌价值、等级、详细报告的评测结果
 
 ### 6. 数据格式说明
 
@@ -156,18 +156,18 @@ interface BrandInputData {
 ```typescript
 interface BrandValuationResult {
   success: boolean;                     // 是否成功
-  data?: {                             // 评估结果数据
+  data?: {                             // 评测结果数据
     brand_name: string;                // 品牌名称
-    evaluation_date: string;           // 评估日期
+    evaluation_date: string;           // 评测日期
     
-    // 一致性评估结果
+    // 一致性评测结果
     consistency_evaluation: {
       total_score: number;             // 总分
       grade: string;                   // 等级
       analysis_report: string;         // 分析报告
     };
     
-    // BrandZ评估结果
+    // BrandZ评测结果
     brandz_evaluation: {
       brandz_value: number;            // BrandZ价值
       brand_grade: string;             // 品牌等级
@@ -183,7 +183,7 @@ interface BrandValuationResult {
       mds_report: string;             // MDS报告
     };
     
-    // 评估总结
+    // 评测总结
     evaluation_summary: {
       consistency_grade: string;       // 一致性等级
       brandz_grade: string;           // BrandZ等级
@@ -197,7 +197,7 @@ interface BrandValuationResult {
 ### 7. 示例数据和文件
 
 - **`src/input.json`**: 完整的品牌输入数据示例
-- **`src/example-brand-calculator.ts`**: 品牌价值评估使用示例
+- **`src/example-brand-calculator.ts`**: 品牌价值评测使用示例
 - **`src/example-brand-generator.ts`**: 品牌资产生成使用示例
 - **`src/example-complete-test.ts`**: 完整测试流程示例
 
@@ -205,5 +205,5 @@ interface BrandValuationResult {
 
 - 确保在 `.env` 文件中正确配置LLM API密钥
 - 品牌描述文本越详细，生成的品牌资产质量越高
-- 评估结果会保存为JSON文件，便于查看和分析
+- 评测结果会保存为JSON文件，便于查看和分析
 - 建议先运行示例了解系统功能，再进行自定义使用

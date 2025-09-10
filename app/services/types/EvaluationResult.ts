@@ -1,15 +1,15 @@
 /**
- * 评估结果类型定义
+ * 评测结果类型定义
  */
 
 export interface BrandZEvaluationResult {
-  // 财务价值评估
+  // 财务价值评测
   financial_value_score: number;
   revenue_performance: number;
   asset_efficiency: number;
   brand_multiple: number;
   
-  // 品牌贡献评估
+  // 品牌贡献评测
   brand_contribution_score: number;
   meaningful_score: number;
   different_score: number;
@@ -18,11 +18,11 @@ export interface BrandZEvaluationResult {
   // 品牌一致性
   consistency_score: number;
   
-  // 综合评估
+  // 综合评测
   brandz_value: number;
   brand_grade: string;
   
-  // 评估详情
+  // 评测详情
   evaluation_details?: Record<string, any>;
   improvement_suggestions?: string;
 }

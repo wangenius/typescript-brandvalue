@@ -17,7 +17,7 @@ import {
 export default function Guide() {
   const brandZCriteria = [
     {
-      category: '财务价值评估',
+      category: '财务价值评测',
       icon: DollarSign,
       description: '基于凯度BrandZ模型的财务价值计算',
       items: [
@@ -27,7 +27,7 @@ export default function Guide() {
       ]
     },
     {
-      category: '品牌贡献评估',
+      category: '品牌贡献评测',
       icon: Heart,
       description: '基于MDS模型 + 品牌一致性的贡献分析',
       items: [
@@ -43,7 +43,7 @@ export default function Guide() {
     {
       category: '品牌基础 (25%)',
       icon: Target,
-      description: '评估品牌的基础信息和市场定位',
+      description: '评测品牌的基础信息和市场定位',
       items: [
         { name: '品牌名称识别度', weight: '5%', description: '品牌名称的独特性和记忆度' },
         { name: '品牌描述清晰度', weight: '5%', description: '品牌描述的准确性和吸引力' },
@@ -55,7 +55,7 @@ export default function Guide() {
     {
       category: '品牌理念 (30%)',
       icon: Users,
-      description: '评估品牌的核心理念和价值观',
+      description: '评测品牌的核心理念和价值观',
       items: [
         { name: '使命陈述完整性', weight: '8%', description: '使命陈述的完整性和感召力' },
         { name: '愿景描述清晰度', weight: '8%', description: '愿景描述的清晰度和可实现性' },
@@ -66,7 +66,7 @@ export default function Guide() {
     {
       category: '品牌表达 (25%)',
       icon: Award,
-      description: '评估品牌在各触点的表达一致性',
+      description: '评测品牌在各触点的表达一致性',
       items: [
         { name: '品牌口号感染力', weight: '6%', description: '品牌口号的感染力和记忆度' },
         { name: '核心承诺可信度', weight: '6%', description: '核心承诺的可信度和可实现性' },
@@ -78,7 +78,7 @@ export default function Guide() {
     {
       category: '财务表现 (20%)',
       icon: TrendingUp,
-      description: '评估品牌的商业价值和市场表现',
+      description: '评测品牌的商业价值和市场表现',
       items: [
         { name: '营收规模', weight: '5%', description: '营收规模在行业中的地位' },
         { name: '增长率', weight: '5%', description: '营收增长率的可持续性' },
@@ -160,9 +160,9 @@ export default function Guide() {
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold text-gray-900">BrandZ评估指南</h1>
+        <h1 className="text-3xl font-bold text-gray-900">BrandZ评测指南</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          了解BrandZ评估标准和填写建议，帮助您更好地完成品牌价值评估
+          了解BrandZ评测标准和填写建议，帮助您更好地完成品牌价值评测
         </p>
       </div>
 
@@ -174,7 +174,7 @@ export default function Guide() {
           </TabsTrigger>
           <TabsTrigger value="consistency" className="flex items-center space-x-2">
             <Target className="h-4 w-4" />
-            <span>一致性评估</span>
+            <span>一致性评测</span>
           </TabsTrigger>
           <TabsTrigger value="tips" className="flex items-center space-x-2">
             <Lightbulb className="h-4 w-4" />
@@ -191,10 +191,10 @@ export default function Guide() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Zap className="h-5 w-5" />
-                <span>BrandZ评估模型详解</span>
+                <span>BrandZ评测模型详解</span>
               </CardTitle>
               <CardDescription>
-                基于凯度BrandZ全球品牌价值评估标准，采用财务价值 × 品牌贡献的科学公式
+                基于凯度BrandZ全球品牌价值评测标准，采用财务价值 × 品牌贡献的科学公式
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -238,10 +238,10 @@ export default function Guide() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Target className="h-5 w-5" />
-                <span>品牌一致性评估标准</span>
+                <span>品牌一致性评测标准</span>
               </CardTitle>
               <CardDescription>
-                评估品牌屋各维度的一致性和协调性，总分100分
+                评测品牌屋各维度的一致性和协调性，总分100分
               </CardDescription>
             </CardHeader>
             <CardContent>

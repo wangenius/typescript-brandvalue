@@ -1,19 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Send, Loader2, ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { EvaluationProgress } from "@/components/ui/evaluation-progress";
 import { cn } from "@/lib/utils";
+import { ArrowLeft, ArrowRight, CheckCircle, Loader2, Send } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useState, useRef, useEffect } from "react";
 
 interface Message {
   id: string;
@@ -28,26 +20,39 @@ export default function EvaluationPage() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   // Auto-resize textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     // Auto-resize
     e.target.style.height = 'auto';
-    e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
+    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
   };
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
       role: "assistant",
       content:
-        "你好！我是你的品牌评估助手。\n\n请先告诉我您的品牌名称，以及用一句话描述您的品牌是做什么的？",
+        "你好！我是你的品牌专家。\n在评测您的品牌健康度之前，让我来先对您的品牌有个全方位的了解。\n首先，可以告诉我您的品牌基本信息吗？比如品牌名称、品牌定位、品牌受众、品牌价值等。\n或者可以给到您的品牌网站地址。",
     },
   ]);
 
+  // Auto-focus textarea on mount and when loading state changes
+  useEffect(() => {
+    if (!isLoading && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isLoading]);
+
+  // Focus on mount
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, []);
+
   async function proceedToResults() {
     try {
-      // 创建品牌评估任务
+      // 创建品牌评测任务
       const response = await fetch("/api/tasks", {
         method: "POST",
         headers: {
@@ -73,7 +78,7 @@ export default function EvaluationPage() {
         const { taskId } = await response.json();
         setCurrentTaskId(taskId);
 
-        // 开始生成和评估流程
+        // 开始生成和评测流程
         startEvaluationProcess(taskId);
         // 保存数据并跳转到结果页面
         sessionStorage.setItem(
@@ -98,7 +103,7 @@ export default function EvaluationPage() {
       }
     } catch (error) {
       console.error("Error in evaluation process:", error);
-      alert("评估过程中出现错误，请重试");
+      alert("评测过程中出现错误，请重试");
     }
   }
 
@@ -129,7 +134,7 @@ export default function EvaluationPage() {
 
       const genResult = await genResponse.json();
 
-      // 2. 开始评估
+      // 2. 开始评测
       const evalResponse = await fetch("/api/brand/evaluate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -141,7 +146,7 @@ export default function EvaluationPage() {
       });
 
       if (!evalResponse.ok) {
-        throw new Error("品牌评估失败");
+        throw new Error("品牌评测失败");
       }
     } catch (error: any) {
       console.error("Evaluation process error:", error);
@@ -420,7 +425,7 @@ export default function EvaluationPage() {
                     信息收集完成！
                   </h3>
                   <p className="text-gray-700 mb-4">
-                    我已经收集到足够的品牌信息，现在可以为您生成专业的评估报告了。
+                    我已经收集到足够的品牌信息，现在可以为您生成专业的评测报告了。
                   </p>
                   {currentTaskId && (
                     <div className="mb-4 p-3 bg-white rounded-xl">
@@ -434,7 +439,7 @@ export default function EvaluationPage() {
                     onClick={proceedToResults}
                     className="bg-green-600 hover:bg-green-700 text-white"
                   >
-                    查看评估结果
+                    查看评测结果
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </div>
@@ -447,15 +452,16 @@ export default function EvaluationPage() {
       {/* Input Area */}
       <div className="bg-white px-4 py-4">
         <div className="max-w-2xl mx-auto">
-          <form onSubmit={handleFormSubmit} className="flex items-end gap-3">
-            <div className="flex-1">
+          <form onSubmit={handleFormSubmit} className="relative">
+            <div className="relative bg-gray-100 rounded-2xl overflow-hidden">
               <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={handleInputChange}
                 placeholder={isLoading ? "AI正在思考..." : "输入您的回答..."}
                 disabled={isLoading}
-                className="w-full resize-none bg-gray-100 focus:bg-gray-50 border-0 focus:ring-2 focus:ring-gray-300 focus:outline-none rounded-2xl min-h-[72px] max-h-[120px] px-4 py-3 text-sm placeholder-gray-500"
-                rows={3}
+                className="w-full resize-none bg-transparent focus:outline-none rounded-2xl min-h-[76px] max-h-[120px] pl-4 pr-12 py-4 text-sm placeholder-gray-500"
+                rows={1}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -463,14 +469,18 @@ export default function EvaluationPage() {
                   }
                 }}
               />
+              <button
+                type="submit"
+                disabled={isLoading || !input.trim()}
+                className="absolute right-2 bottom-2 p-2 bg-black hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-xl transition-colors duration-200"
+              >
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+              </button>
             </div>
-            <Button 
-              type="submit" 
-              disabled={isLoading || !input.trim()}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-2xl px-4 py-2 h-fit"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
           </form>
         </div>
       </div>

@@ -1,5 +1,5 @@
 /**
- * Express服务器 - 品牌价值评估API
+ * Express服务器 - 品牌价值评测API
  */
 
 import express, { Request, Response, NextFunction } from 'express';
@@ -29,12 +29,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.get('/health', (req: Request, res: Response) => {
   res.json({ 
     status: 'ok', 
-    message: '品牌价值评估服务运行正常',
+    message: '品牌价值评测服务运行正常',
     timestamp: new Date().toISOString()
   });
 });
 
-// 品牌价值评估接口
+// 品牌价值评测接口
 app.post('/api/brand/evaluate', async (req: Request, res: Response) => {
   try {
     const brandData: BrandInputData = req.body;
@@ -47,16 +47,16 @@ app.post('/api/brand/evaluate', async (req: Request, res: Response) => {
       });
     }
 
-    console.log(`开始评估品牌: ${brandData.brand_name}`);
+    console.log(`开始评测品牌: ${brandData.brand_name}`);
     
-    // 执行品牌价值评估
+    // 执行品牌价值评测
     const result = await brand_valuate(brandData);
     
     if (result.success) {
-      console.log(`品牌评估完成: ${brandData.brand_name}`);
+      console.log(`品牌评测完成: ${brandData.brand_name}`);
       res.json(result);
     } else {
-      console.error(`品牌评估失败: ${brandData.brand_name}`, result.error);
+      console.error(`品牌评测失败: ${brandData.brand_name}`, result.error);
       res.status(500).json(result);
     }
     
@@ -129,7 +129,7 @@ app.use('*', (req: Request, res: Response) => {
 
 // 启动服务器
 app.listen(PORT, () => {
-  console.log(`🚀 品牌价值评估服务器启动成功`);
+  console.log(`🚀 品牌价值评测服务器启动成功`);
   console.log(`📍 服务地址: http://localhost:${PORT}`);
   console.log(`💚 健康检查: http://localhost:${PORT}/health`);
 });

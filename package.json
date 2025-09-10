@@ -1,7 +1,7 @@
 {
   "name": "brandvalue-typescript",
   "version": "1.0.0",
-  "description": "品牌价值评估系统 - Next.js 全栈版本",
+  "description": "品牌价值评测系统 - Next.js 全栈版本",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

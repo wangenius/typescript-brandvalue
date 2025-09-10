@@ -1,6 +1,6 @@
 /**
  * 品牌表达的一致性评价模块 - TypeScript版本
- * 评估品牌表达的一致性、风格调性、核心理念等要素
+ * 评测品牌表达的一致性、风格调性、核心理念等要素
  */
 
 import { LLM } from "./LLM";
@@ -183,7 +183,7 @@ export class BrandConsistencyEvaluator {
   }
 
   /**
-   * 评估品牌屋一致性
+   * 评测品牌屋一致性
    */
   async evaluateBrandHouse(
     metrics: BrandConsistencyMetrics,
@@ -297,7 +297,7 @@ ${analysisReport}
     analysisReport: string
   ): Promise<string> {
     const prompt = `
-基于以下信息，生成品牌一致性评估的最终总结：
+基于以下信息，生成品牌一致性评测的最终总结：
 
 总分: ${totalScore}/100
 等级: ${grade}
@@ -315,7 +315,7 @@ SWOT分析: ${JSON.stringify(swotAnalysis, null, 2)}
       const summary = await this.llm.text(prompt);
       return summary;
     } catch (error) {
-      return `品牌一致性评估总结
+      return `品牌一致性评测总结
 
 总分: ${totalScore}/100
 等级: ${grade}

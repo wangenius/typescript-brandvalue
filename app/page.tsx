@@ -27,8 +27,8 @@ export default function HomePage() {
     },
     {
       icon: BarChart,
-      title: "专业评估模型",
-      description: "基于BrandZ模型的科学品牌价值评估体系，融合国际标准与本土化洞察"
+      title: "专业评测模型",
+      description: "基于BrandZ模型的科学品牌价值评测体系，融合国际标准与本土化洞察"
     },
     {
       icon: Award,
@@ -47,13 +47,13 @@ export default function HomePage() {
     {
       icon: Shield,
       title: "BrandZ国际标准",
-      description: "采用全球认可的BrandZ品牌评估方法论，确保评估结果的科学性和权威性",
+      description: "采用全球认可的BrandZ品牌评测方法论，确保评测结果的科学性和权威性",
       highlight: "国际认证"
     },
     {
       icon: Zap,
       title: "AI Agent智能分析",
-      description: "智能代理实时分析用户品牌特征，动态调整评估维度，提供个性化洞察",
+      description: "智能代理实时分析用户品牌特征，动态调整评测维度，提供个性化洞察",
       highlight: "智能创新"
     }
   ];
@@ -61,14 +61,14 @@ export default function HomePage() {
   const steps = [
     "与AI助手对话，描述您的品牌",
     "AI自动提取和整理品牌信息",
-    "生成专业的品牌价值评估报告",
+    "生成专业的品牌价值评测报告",
     "获得改进建议和SWOT分析"
   ];
 
   const benefits = [
     { text: "BrandZ综合评分和等级评定", important: true },
     { text: "财务价值和品牌贡献度分析", important: true },
-    { text: "品牌一致性评估", important: false },
+    { text: "品牌一致性评测", important: false },
     { text: "SWOT战略分析", important: false },
     { text: "个性化改进建议", important: false }
   ];
@@ -88,18 +88,18 @@ export default function HomePage() {
             {/* Hero Badge */}
             <Badge variant="outline" className="mb-4 px-4 py-1.5 text-sm border-primary/20 bg-primary/5">
               <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-              专业品牌价值评估平台
+              专业品牌价值评测平台
             </Badge>
             
             {/* Main Title */}
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
               智能品牌价值
-              <span className="block text-primary mt-2">评估系统</span>
+              <span className="block text-primary mt-2">评测系统</span>
             </h1>
             
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-              通过AI对话，快速评估您的品牌价值
+              通过AI对话，快速评测您的品牌价值
             </p>
             
             {/* Scientific Credibility Line */}
@@ -118,13 +118,18 @@ export default function HomePage() {
                 <Zap className="w-4 h-4 text-primary" />
                 AI Agent智能分析
               </span>
+              <span className="text-muted-foreground/50">·</span>
+              <span className="flex items-center gap-1.5">
+                <Award className="w-4 h-4 text-primary" />
+                500+顶级品牌建模
+              </span>
             </div>
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
               <Link href="/evaluation">
                 <Button size="lg" className="gap-2 px-8 h-12 text-base shadow-lg hover:shadow-xl transition-all">
-                  开始新评估
+                  开始新评测
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
@@ -151,8 +156,8 @@ export default function HomePage() {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">科学评估，专业可信</h2>
-            <p className="text-lg text-muted-foreground">三大核心技术，确保评估结果的准确性和实用性</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">科学评测，专业可信</h2>
+            <p className="text-lg text-muted-foreground">三大核心技术，确保评测结果的准确性和实用性</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -197,7 +202,7 @@ export default function HomePage() {
           <Card className="border-2">
             <CardHeader className="text-center pb-8">
               <CardTitle className="text-3xl">如何使用</CardTitle>
-              <CardDescription className="text-lg">简单四步，获得专业品牌价值评估</CardDescription>
+              <CardDescription className="text-lg">简单四步，获得专业品牌价值评测</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="relative">
@@ -258,13 +263,13 @@ export default function HomePage() {
       <section className="py-24 bg-gradient-to-t from-primary/5 to-transparent">
         <div className="container mx-auto px-4 text-center">
           <div className="space-y-6">
-            <h3 className="text-3xl font-bold">准备好评估您的品牌价值了吗？</h3>
+            <h3 className="text-3xl font-bold">准备好评测您的品牌价值了吗？</h3>
             <p className="text-xl text-muted-foreground">
-              整个评估过程只需 5-10 分钟
+              整个评测过程只需 5-10 分钟
             </p>
             <Link href="/evaluation">
               <Button size="lg" className="gap-2 px-8 h-14 text-lg shadow-xl hover:shadow-2xl transition-all">
-                立即开始评估
+                立即开始评测
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
