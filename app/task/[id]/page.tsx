@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Clock, CheckCircle, XCircle, Loader2, Copy, Sparkles, Target, TrendingUp, Trophy } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle, XCircle, Loader2, Copy, Sparkles, Target, TrendingUp, Trophy, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +30,7 @@ export default function TaskPage() {
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retrying, setRetrying] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -68,6 +69,36 @@ export default function TaskPage() {
   const copyTaskId = () => {
     if (id) {
       navigator.clipboard.writeText(id as string);
+    }
+  };
+
+  const handleRetry = async () => {
+    if (!id || retrying) return;
+    
+    setRetrying(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/tasks/${id}/retry`, {
+        method: 'POST',
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        // 重新获取任务状态
+        const taskResponse = await fetch(`/api/tasks/${id}`);
+        const taskData = await taskResponse.json();
+        if (taskResponse.ok) {
+          setTask(taskData.task);
+        }
+      } else {
+        setError(data.error || '重试失败');
+      }
+    } catch (err) {
+      setError('重试请求失败');
+    } finally {
+      setRetrying(false);
     }
   };
 
@@ -500,9 +531,31 @@ export default function TaskPage() {
                       {getStatusIcon(task.status)}
                       任务状态
                     </CardTitle>
-                    <Badge variant={getStatusVariant(task.status)}>
-                      {getStatusText(task.status)}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={getStatusVariant(task.status)}>
+                        {getStatusText(task.status)}
+                      </Badge>
+                      {task.status === 'failed' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleRetry}
+                          disabled={retrying}
+                        >
+                          {retrying ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              重试中...
+                            </>
+                          ) : (
+                            <>
+                              <RefreshCw className="w-4 h-4 mr-2" />
+                              重新生成
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                   <CardDescription>
                     类型: {getTypeText(task.type)} | 

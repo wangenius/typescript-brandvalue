@@ -118,7 +118,12 @@ export class LLM {
    */
   private async callLLMAPI(message: string, json?: boolean): Promise<string> {
     try {
-      const completion = await this.openai.chat.completions.create({
+      // 构建消息内容
+      const userContent = json 
+        ? `请以JSON格式返回结果。\n\n${message}` 
+        : message;
+
+      const params: any = {
         model: this.config.model,
         messages: [
           {
@@ -127,21 +132,28 @@ export class LLM {
           },
           {
             role: "user",
-            content: message,
+            content: userContent,
           },
         ],
         temperature: this.config.temperature,
-        response_format: json
-          ? {
-              type: "json_object",
-            }
-          : undefined,
-      });
+      };
+
+      // 只有支持response_format的模型才添加此参数
+      // 检查模型是否为GPT-4或GPT-3.5系列
+      const supportsResponseFormat = 
+        this.config.model.includes('gpt-4') || 
+        this.config.model.includes('gpt-3.5');
+      
+      if (json && supportsResponseFormat) {
+        params.response_format = { type: "json_object" };
+      }
+
+      const completion = await this.openai.chat.completions.create(params);
 
       return completion.choices[0]?.message?.content || "无响应内容";
     } catch (error) {
       console.error("LLM调用失败:", error);
-      return `错误: ${error instanceof Error ? error.message : "未知错误"}`;
+      throw error; // 抛出错误而不是返回错误字符串
     }
   }
 }

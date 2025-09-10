@@ -28,8 +28,33 @@ export async function POST(req: NextRequest) {
     // 如果启用流式返回
     if (stream) {
       const encoder = new TextEncoder();
+      let isClosed = false;
+      
       const readable = new ReadableStream({
         async start(controller) {
+          // 安全的 enqueue 函数
+          const safeEnqueue = (data: string) => {
+            if (!isClosed) {
+              try {
+                controller.enqueue(encoder.encode(data));
+              } catch (err) {
+                console.error('Failed to enqueue data:', err);
+              }
+            }
+          };
+          
+          // 安全的 close 函数
+          const safeClose = () => {
+            if (!isClosed) {
+              try {
+                controller.close();
+                isClosed = true;
+              } catch (err) {
+                console.error('Failed to close controller:', err);
+              }
+            }
+          };
+          
           try {
             // 更新任务状态为进行中
             if (taskId) {
@@ -46,20 +71,16 @@ export async function POST(req: NextRequest) {
             if (taskId) {
               taskManager.updateTaskProgress(taskId, initialProgress);
             }
-            controller.enqueue(
-              encoder.encode(`data: ${JSON.stringify(initialProgress)}\n\n`)
-            );
+            safeEnqueue(`data: ${JSON.stringify(initialProgress)}\n\n`);
 
             // 步骤1：品牌一致性评估
-            controller.enqueue(
-              encoder.encode(
-                `data: ${JSON.stringify({
-                  step: 1,
-                  totalSteps: 3,
-                  status: "正在进行品牌一致性评估...",
-                  progress: 10,
-                })}\n\n`
-              )
+            safeEnqueue(
+              `data: ${JSON.stringify({
+                step: 1,
+                totalSteps: 3,
+                status: "正在进行品牌一致性评估...",
+                progress: 10,
+              })}\n\n`
             );
 
             const consistencyStartTime = Date.now();
@@ -70,29 +91,25 @@ export async function POST(req: NextRequest) {
               (Date.now() - consistencyStartTime) /
               1000
             ).toFixed(1);
-            controller.enqueue(
-              encoder.encode(
-                `data: ${JSON.stringify({
-                  step: 1,
-                  totalSteps: 3,
-                  status: `✅ 品牌一致性评估完成 (用时${consistencyTime}秒)`,
-                  progress: 40,
-                  data: { consistencyResult },
-                  timing: { consistencyTime: consistencyTime },
-                })}\n\n`
-              )
+            safeEnqueue(
+              `data: ${JSON.stringify({
+                step: 1,
+                totalSteps: 3,
+                status: `✅ 品牌一致性评估完成 (用时${consistencyTime}秒)`,
+                progress: 40,
+                data: { consistencyResult },
+                timing: { consistencyTime: consistencyTime },
+              })}\n\n`
             );
 
             // 步骤2：BrandZ价值评估
-            controller.enqueue(
-              encoder.encode(
-                `data: ${JSON.stringify({
-                  step: 2,
-                  totalSteps: 3,
-                  status: "正在进行BrandZ价值评估...",
-                  progress: 50,
-                })}\n\n`
-              )
+            safeEnqueue(
+              `data: ${JSON.stringify({
+                step: 2,
+                totalSteps: 3,
+                status: "正在进行BrandZ价值评估...",
+                progress: 50,
+              })}\n\n`
             );
 
             const brandzStartTime = Date.now();
@@ -104,29 +121,25 @@ export async function POST(req: NextRequest) {
               1
             );
 
-            controller.enqueue(
-              encoder.encode(
-                `data: ${JSON.stringify({
-                  step: 2,
-                  totalSteps: 3,
-                  status: `✅ BrandZ价值评估完成 (用时${brandzTime}秒)`,
-                  progress: 75,
-                  data: { brandzResult },
-                  timing: { brandzTime: brandzTime },
-                })}\n\n`
-              )
+            safeEnqueue(
+              `data: ${JSON.stringify({
+                step: 2,
+                totalSteps: 3,
+                status: `✅ BrandZ价值评估完成 (用时${brandzTime}秒)`,
+                progress: 75,
+                data: { brandzResult },
+                timing: { brandzTime: brandzTime },
+              })}\n\n`
             );
 
             // 步骤3：生成综合报告
-            controller.enqueue(
-              encoder.encode(
-                `data: ${JSON.stringify({
-                  step: 3,
-                  totalSteps: 3,
-                  status: "正在生成综合报告...",
-                  progress: 85,
-                })}\n\n`
-              )
+            safeEnqueue(
+              `data: ${JSON.stringify({
+                step: 3,
+                totalSteps: 3,
+                status: "正在生成综合报告...",
+                progress: 85,
+              })}\n\n`
             );
 
             const reportStartTime = Date.now();
@@ -160,25 +173,28 @@ export async function POST(req: NextRequest) {
               taskManager.setTaskResult(taskId, comprehensiveReport);
             }
 
-            controller.enqueue(
-              encoder.encode(`data: ${JSON.stringify(finalResult)}\n\n`)
-            );
-            controller.close();
+            safeEnqueue(`data: ${JSON.stringify(finalResult)}\n\n`);
+            safeClose();
           } catch (error: any) {
-            if (taskId) {
-              taskManager.setTaskError(
-                taskId,
-                error?.message || "品牌评估失败"
-              );
-            }
-            controller.enqueue(
-              encoder.encode(
+            // 检查控制器是否还可以写入
+            try {
+              if (taskId) {
+                taskManager.setTaskError(
+                  taskId,
+                  error?.message || "品牌评估失败"
+                );
+              }
+              safeEnqueue(
                 `data: ${JSON.stringify({
                   error: error?.message || "品牌评估失败",
                 })}\n\n`
-              )
-            );
-            controller.close();
+              );
+            } catch (controllerError) {
+              // 如果控制器已关闭，仅记录错误
+              console.error('Controller already closed:', controllerError);
+            }
+            
+            safeClose();
           }
         },
       });

@@ -234,9 +234,64 @@ export default function EvaluationPage() {
             if (trimmedLine.startsWith("data: ")) {
               try {
                 const data = JSON.parse(trimmedLine.slice(6));
+                
+                // Handle regular content
                 if (data.content) {
                   accumulatedContent += data.content;
                   // Update the streaming message
+                  setMessages((prev) =>
+                    prev.map((msg) =>
+                      msg.id === tempMessageId
+                        ? { ...msg, content: accumulatedContent }
+                        : msg
+                    )
+                  );
+                }
+                
+                // Handle function call start
+                if (data.functionCall && data.functionCall.status === 'executing') {
+                  const funcName = data.functionCall.name;
+                  let statusText = '\n\n[正在执行...]';
+                  
+                  switch(funcName) {
+                    case 'getCurrentTime':
+                      statusText = '\n\n[正在获取当前时间...]';
+                      break;
+                    case 'readWebContent':
+                      statusText = '\n\n[正在读取网页内容...]';
+                      break;
+                    case 'searchWeb':
+                      statusText = '\n\n[正在搜索网络信息...]';
+                      break;
+                  }
+                  
+                  accumulatedContent += statusText;
+                  setMessages((prev) =>
+                    prev.map((msg) =>
+                      msg.id === tempMessageId
+                        ? { ...msg, content: accumulatedContent }
+                        : msg
+                    )
+                  );
+                }
+                
+                // Handle function result
+                if (data.functionResult) {
+                  // Remove the status text
+                  accumulatedContent = accumulatedContent.replace(/\n\n\[正在.*?\.\.\.\]$/, '');
+                  setMessages((prev) =>
+                    prev.map((msg) =>
+                      msg.id === tempMessageId
+                        ? { ...msg, content: accumulatedContent }
+                        : msg
+                    )
+                  );
+                }
+                
+                // Handle function error
+                if (data.functionError) {
+                  const errorText = `\n\n[工具调用失败: ${data.functionError.error}]`;
+                  accumulatedContent = accumulatedContent.replace(/\n\n\[正在.*?\.\.\.\]$/, errorText);
                   setMessages((prev) =>
                     prev.map((msg) =>
                       msg.id === tempMessageId
