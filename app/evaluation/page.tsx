@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Send, Loader2, ArrowLeft } from "lucide-react";
+import { Send, Loader2, ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { EvaluationProgress } from "@/components/ui/evaluation-progress";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +28,14 @@ export default function EvaluationPage() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
+  
+  // Auto-resize textarea
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+    // Auto-resize
+    e.target.style.height = 'auto';
+    e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
+  };
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -268,106 +275,149 @@ export default function EvaluationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 max-w-4xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+    <div className="flex flex-col h-screen">
+      {/* Header */}
+      <header className="px-4 py-3">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
           <Link href="/">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" className="hover:bg-gray-200 bg-gray-100">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              返回首页
+              返回
             </Button>
           </Link>
+          <h1 className="text-lg font-medium text-gray-900">品牌咨询</h1>
+          <div className="w-12"></div>
         </div>
+      </header>
 
-
-        {/* Chat Interface */}
-        <Card className="max-w-3xl mx-auto">
-          <CardHeader>
-            <CardTitle>品牌咨询</CardTitle>
-            <CardDescription>
-              请告诉我关于您品牌的信息，我会引导您完成评估所需的资料收集
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[500px] flex flex-col">
-              <div className="flex-1 overflow-y-auto space-y-4 mb-4 p-4 bg-muted/10 rounded-lg">
-                {messages.map((message) => {
-                  const content = message.content
-                    .replace("[READY_FOR_EVALUATION]", "")
-                    .trim();
-                  return (
-                    <div
-                      key={message.id}
-                      className={cn(
-                        "flex",
-                        message.role === "assistant"
-                          ? "justify-start"
-                          : "justify-end"
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          "max-w-[80%] rounded-lg px-4 py-3",
-                          message.role === "assistant"
-                            ? "bg-muted"
-                            : "bg-primary text-primary-foreground"
-                        )}
-                      >
-                        <p className="text-sm whitespace-pre-wrap">{content}</p>
-                      </div>
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-2xl mx-auto px-4 py-6">
+          {messages.map((message) => {
+            const content = message.content
+              .replace("[READY_FOR_EVALUATION]", "")
+              .trim();
+            return (
+              <div key={message.id} className="mb-8">
+                <div className={cn(
+                  "flex items-start gap-3",
+                  message.role === "user" ? "justify-end" : ""
+                )}>
+                  {/* AI Avatar - left side */}
+                  {message.role === "assistant" && (
+                    <div className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs font-medium flex-shrink-0 mt-1">
+                      AI
                     </div>
-                  );
-                })}
-                {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-muted rounded-lg px-4 py-3">
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                  )}
+                  
+                  {/* Message Content */}
+                  <div className={cn(
+                    "max-w-[80%]",
+                    message.role === "user" ? "order-first" : ""
+                  )}>
+                    <div className={cn(
+                      "rounded-2xl px-4 py-3",
+                      message.role === "assistant" 
+                        ? "bg-accent text-gray-900" 
+                        : "bg-gray-700 text-white"
+                    )}>
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {content}
+                      </p>
                     </div>
                   </div>
-                )}
-              </div>
 
-              <form onSubmit={handleFormSubmit} className="flex gap-2">
-                <Input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder={isLoading ? "AI思考中..." : "输入您的回答..."}
-                  disabled={isLoading}
-                  className="flex-1"
-                />
-                <Button type="submit" disabled={isLoading || !input.trim()}>
-                  <Send className="w-4 h-4" />
-                </Button>
-              </form>
+                  {/* User Avatar - right side */}
+                  {message.role === "user" && (
+                    <div className="w-7 h-7 rounded-full bg-gray-600 flex items-center justify-center text-white text-xs font-medium flex-shrink-0 mt-1">
+                      U
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+          
+          {/* Loading Indicator */}
+          {isLoading && (
+            <div className="mb-8">
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs font-medium flex-shrink-0 mt-1">
+                  AI
+                </div>
+                <div className="bg-white rounded-2xl px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin text-gray-600" />
+                    <span className="text-sm text-gray-600">思考中...</span>
+                  </div>
+                </div>
+              </div>
             </div>
+          )}
 
-            {isReady && (
-              <div className="mt-6 text-center">
-                <p className="text-sm text-muted-foreground mb-4">
-                  太好了！我已经收集到足够的信息。现在可以为您生成评估报告了。
-                </p>
-                {currentTaskId && (
-                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm font-medium text-blue-800 mb-1">
-                      任务已创建
-                    </p>
-                    <p className="text-xs text-blue-600 font-mono break-all">
-                      任务ID: {currentTaskId}
-                    </p>
-                    <p className="text-xs text-blue-500 mt-1">
-                      请保存此任务ID，稍后可在首页查询评估状态
-                    </p>
-                  </div>
-                )}
-                <Button onClick={proceedToResults} size="lg">
-                  查看评估结果
-                </Button>
+          {/* Ready for Evaluation */}
+          {isReady && (
+            <div className="mb-8">
+              <div className="bg-green-100 rounded-2xl p-6">
+                <div className="text-center">
+                  <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-3" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    信息收集完成！
+                  </h3>
+                  <p className="text-gray-700 mb-4">
+                    我已经收集到足够的品牌信息，现在可以为您生成专业的评估报告了。
+                  </p>
+                  {currentTaskId && (
+                    <div className="mb-4 p-3 bg-white rounded-xl">
+                      <p className="font-medium text-gray-900 mb-1 text-sm">任务已创建</p>
+                      <p className="text-gray-600 font-mono text-xs break-all">
+                        {currentTaskId}
+                      </p>
+                    </div>
+                  )}
+                  <Button 
+                    onClick={proceedToResults}
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    查看评估结果
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Input Area */}
+      <div className="bg-white px-4 py-4">
+        <div className="max-w-2xl mx-auto">
+          <form onSubmit={handleFormSubmit} className="flex items-end gap-3">
+            <div className="flex-1">
+              <textarea
+                value={input}
+                onChange={handleInputChange}
+                placeholder={isLoading ? "AI正在思考..." : "输入您的回答..."}
+                disabled={isLoading}
+                className="w-full resize-none bg-gray-100 focus:bg-gray-50 border-0 focus:ring-2 focus:ring-gray-300 focus:outline-none rounded-2xl min-h-[72px] max-h-[120px] px-4 py-3 text-sm placeholder-gray-500"
+                rows={3}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleFormSubmit(e);
+                  }
+                }}
+              />
+            </div>
+            <Button 
+              type="submit" 
+              disabled={isLoading || !input.trim()}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-2xl px-4 py-2 h-fit"
+            >
+              <Send className="w-4 h-4" />
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   );
