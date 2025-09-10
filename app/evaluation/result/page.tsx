@@ -30,8 +30,23 @@ export default function ResultPage() {
   const [evalResult, setEvalResult] = useState<any | null>(null);
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState("");
+  const [generationTaskId, setGenerationTaskId] = useState<string | null>(null);
+  const [evaluationTaskId, setEvaluationTaskId] = useState<string | null>(null);
 
   useEffect(() => {
+    // 检查URL参数中是否有任务ID（用于恢复）
+    const urlParams = new URLSearchParams(window.location.search);
+    const genTaskId = urlParams.get('genTaskId');
+    const evalTaskId = urlParams.get('evalTaskId');
+    
+    if (genTaskId && evalTaskId) {
+      // 恢复现有任务
+      setGenerationTaskId(genTaskId);
+      setEvaluationTaskId(evalTaskId);
+      resumeTasks(genTaskId, evalTaskId);
+      return;
+    }
+
     // 获取存储的数据
     const dataStr = sessionStorage.getItem("evaluationData");
     if (!dataStr) {
@@ -49,11 +64,90 @@ export default function ResultPage() {
     generateAndEvaluate(data);
   }, []);
 
+  async function resumeTasks(genTaskId: string, evalTaskId: string) {
+    setLoading(true);
+    try {
+      // 检查生成任务状态
+      const genTaskResponse = await fetch(`/api/tasks/${genTaskId}`);
+      const genTask = await genTaskResponse.json();
+      
+      if (!genTask.success) {
+        throw new Error('生成任务不存在');
+      }
+
+      if (genTask.task.status === 'completed' && genTask.task.result) {
+        // 生成已完成，检查评估任务
+        const evalTaskResponse = await fetch(`/api/tasks/${evalTaskId}`);
+        const evalTask = await evalTaskResponse.json();
+        
+        if (evalTask.success && evalTask.task.status === 'completed' && evalTask.task.result) {
+          // 两个任务都完成了
+          setEvalResult(evalTask.task.result);
+          setProgress(100);
+          setCurrentStep('评估完成！');
+          setLoading(false);
+          return;
+        } else if (evalTask.task.status === 'in_progress') {
+          // 评估正在进行中，继续监听
+          await monitorEvaluationTask(evalTaskId, genTask.task.result);
+          return;
+        } else {
+          // 评估任务失败或未开始，重新开始评估
+          await startEvaluation(genTask.task.result, evalTaskId);
+          return;
+        }
+      } else if (genTask.task.status === 'in_progress') {
+        // 生成正在进行中，继续监听
+        await monitorGenerationTask(genTaskId, evalTaskId);
+        return;
+      } else {
+        throw new Error('生成任务失败');
+      }
+    } catch (e: any) {
+      setError(e?.message || '任务恢复失败');
+      setLoading(false);
+    }
+  }
+
   async function generateAndEvaluate(data: any) {
     setLoading(true);
     try {
       setCurrentStep("正在分析品牌信息...");
       setProgress(10);
+
+      // 创建生成任务
+      const createGenTaskResponse = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'brand_generation' })
+      });
+      const genTaskResult = await createGenTaskResponse.json();
+      
+      if (!genTaskResult.success) {
+        throw new Error('创建生成任务失败');
+      }
+      
+      const genTaskId = genTaskResult.taskId;
+      setGenerationTaskId(genTaskId);
+
+      // 创建评估任务
+      const createEvalTaskResponse = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'brand_evaluation' })
+      });
+      const evalTaskResult = await createEvalTaskResponse.json();
+      
+      if (!evalTaskResult.success) {
+        throw new Error('创建评估任务失败');
+      }
+      
+      const evalTaskId = evalTaskResult.taskId;
+      setEvaluationTaskId(evalTaskId);
+      
+      // 更新URL以支持刷新恢复
+      const newUrl = `${window.location.pathname}?genTaskId=${genTaskId}&evalTaskId=${evalTaskId}`;
+      window.history.replaceState({}, '', newUrl);
 
       // 从对话历史中提取所有信息来生成品牌资产
       const messages = data.messages || [];
@@ -87,7 +181,7 @@ export default function ResultPage() {
       const generateResponse = await fetch("/api/brand/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: conversationContent, stream: true }),
+        body: JSON.stringify({ content: conversationContent, stream: true, taskId: genTaskId }),
       });
 
       if (!generateResponse.ok) {
@@ -145,7 +239,7 @@ export default function ResultPage() {
       const evaluateResponse = await fetch("/api/brand/evaluate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...brandAsset, stream: true }),
+        body: JSON.stringify({ ...brandAsset, stream: true, taskId: evalTaskId }),
       });
 
       if (!evaluateResponse.ok) {
@@ -203,6 +297,114 @@ export default function ResultPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function monitorGenerationTask(genTaskId: string, evalTaskId: string) {
+    const pollInterval = 2000; // 2秒
+    const maxAttempts = 150; // 最多5分钟
+    let attempts = 0;
+
+    const poll = async () => {
+      try {
+        const response = await fetch(`/api/tasks/${genTaskId}`);
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error('任务查询失败');
+        }
+
+        const task = result.task;
+        
+        if (task.progress) {
+          setProgress(20 + (task.progress.step / task.progress.totalSteps) * 40);
+          setCurrentStep(task.progress.message || task.progress.status || '正在处理...');
+        }
+
+        if (task.status === 'completed' && task.result) {
+          // 生成完成，开始评估
+          await startEvaluation(task.result, evalTaskId);
+        } else if (task.status === 'failed') {
+          throw new Error(task.error || '生成任务失败');
+        } else if (attempts < maxAttempts) {
+          attempts++;
+          setTimeout(poll, pollInterval);
+        } else {
+          throw new Error('生成任务超时');
+        }
+      } catch (error: any) {
+        setError(error.message || '监控生成任务失败');
+        setLoading(false);
+      }
+    };
+
+    poll();
+  }
+
+  async function startEvaluation(brandAsset: any, evalTaskId: string) {
+    try {
+      setCurrentStep('正在评估品牌价值...');
+      setProgress(60);
+
+      const evaluateResponse = await fetch("/api/brand/evaluate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...brandAsset, stream: true, taskId: evalTaskId }),
+      });
+
+      if (!evaluateResponse.ok) {
+        throw new Error("品牌评估失败");
+      }
+
+      // 开始监控评估任务
+      await monitorEvaluationTask(evalTaskId, brandAsset);
+    } catch (error: any) {
+      setError(error.message || '开始评估失败');
+      setLoading(false);
+    }
+  }
+
+  async function monitorEvaluationTask(evalTaskId: string, brandAsset: any) {
+    const pollInterval = 2000; // 2秒
+    const maxAttempts = 150; // 最多5分钟
+    let attempts = 0;
+
+    const poll = async () => {
+      try {
+        const response = await fetch(`/api/tasks/${evalTaskId}`);
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error('评估任务查询失败');
+        }
+
+        const task = result.task;
+        
+        if (task.progress) {
+          setProgress(60 + (task.progress.step / task.progress.totalSteps) * 40);
+          setCurrentStep(task.progress.message || task.progress.status || '正在评估...');
+        }
+
+        if (task.status === 'completed' && task.result) {
+          // 评估完成
+          setEvalResult(task.result);
+          setProgress(100);
+          setCurrentStep('评估完成！');
+          setLoading(false);
+        } else if (task.status === 'failed') {
+          throw new Error(task.error || '评估任务失败');
+        } else if (attempts < maxAttempts) {
+          attempts++;
+          setTimeout(poll, pollInterval);
+        } else {
+          throw new Error('评估任务超时');
+        }
+      } catch (error: any) {
+        setError(error.message || '监控评估任务失败');
+        setLoading(false);
+      }
+    };
+
+    poll();
   }
 
   if (loading) {

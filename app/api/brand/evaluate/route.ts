@@ -1,12 +1,13 @@
 import { brand_valuate, BrandInputData, BrandZCalculator } from "@/services";
 import { NextRequest, NextResponse } from "next/server";
+import { taskManager } from "../../../lib/task-manager";
 
 export const runtime = "nodejs";
 const calculator = new BrandZCalculator();
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as BrandInputData & { stream?: boolean };
+    const body = (await req.json()) as BrandInputData & { stream?: boolean; taskId?: string };
 
     if (!body || !body.brand_name || !body.brand_assets) {
       return NextResponse.json(
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { stream = false } = body;
+    const { stream = false, taskId } = body;
     const calculator = new BrandZCalculator();
 
     // 如果启用流式返回
@@ -27,13 +28,22 @@ export async function POST(req: NextRequest) {
       const readable = new ReadableStream({
         async start(controller) {
           try {
+            // 更新任务状态为进行中
+            if (taskId) {
+              taskManager.updateTaskStatus(taskId, 'in_progress');
+            }
+
             // 发送初始状态
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+            const initialProgress = {
               step: 0,
               totalSteps: 3,
               status: "开始品牌评估",
               progress: 0
-            })}\n\n`));
+            };
+            if (taskId) {
+              taskManager.updateTaskProgress(taskId, initialProgress);
+            }
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(initialProgress)}\n\n`));
 
             // 步骤1：品牌一致性评估
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({
@@ -87,17 +97,25 @@ export async function POST(req: NextRequest) {
             );
 
             // 发送最终结果
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+            const finalResult = {
               step: 3,
               totalSteps: 3,
               status: "✅ 品牌评估完成",
               progress: 100,
               completed: true,
               data: comprehensiveReport
-            })}\n\n`));
-
+            };
+            
+            if (taskId) {
+              taskManager.setTaskResult(taskId, comprehensiveReport);
+            }
+            
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(finalResult)}\n\n`));
             controller.close();
           } catch (error: any) {
+            if (taskId) {
+              taskManager.setTaskError(taskId, error?.message || "品牌评估失败");
+            }
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({
               error: error?.message || "品牌评估失败"
             })}\n\n`));

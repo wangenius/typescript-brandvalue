@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { BrandAssetGenerator, generateBrandAsset } from "@/services";
+import { taskManager } from "../../../lib/task-manager";
 
 export const runtime = "nodejs";
 
@@ -8,7 +9,7 @@ const generator = new BrandAssetGenerator();
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { content, stream = false } = body || {};
+    const { content, stream = false, taskId } = body || {};
 
     if (
       !content ||
@@ -35,13 +36,22 @@ export async function POST(req: NextRequest) {
       const readable = new ReadableStream({
         async start(controller) {
           try {
+            // 更新任务状态为进行中
+            if (taskId) {
+              taskManager.updateTaskStatus(taskId, 'in_progress');
+            }
+
             // 发送初始状态
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+            const initialProgress = {
               step: 0,
               totalSteps: 6,
               status: "开始生成品牌资产",
               progress: 0
-            })}\n\n`));
+            };
+            if (taskId) {
+              taskManager.updateTaskProgress(taskId, initialProgress);
+            }
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(initialProgress)}\n\n`));
 
             // 步骤1：生成基本品牌信息
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({
@@ -155,17 +165,25 @@ export async function POST(req: NextRequest) {
             );
             
             // 发送最终结果
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({
+            const finalResult = {
               step: 6,
               totalSteps: 6,
               status: "✅ 品牌资产生成完成",
               progress: 100,
               completed: true,
               data: validatedData
-            })}\n\n`));
-
+            };
+            
+            if (taskId) {
+              taskManager.setTaskResult(taskId, validatedData);
+            }
+            
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(finalResult)}\n\n`));
             controller.close();
           } catch (error: any) {
+            if (taskId) {
+              taskManager.setTaskError(taskId, error?.message || "品牌资产生成失败");
+            }
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({
               error: error?.message || "品牌资产生成失败"
             })}\n\n`));
