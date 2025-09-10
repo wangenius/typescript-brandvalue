@@ -1,0 +1,142 @@
+{
+    "brand_name": "喜家德",
+    "brand_assets": {
+      "title": "品牌资产",
+      "description": "喜家德，创立于2002年，专注于水饺制作20余载。我们坚持“一生做好一件事”，以“好吃、干净”为核心，坚持现擀、现包、现煮，做中国好水饺，原创“一字型”水饺闻名大众。致力于为老百姓提供放心美味，让老百姓安心吃饺子。",
+      "brand_image": {
+        "title": "品牌形象",
+        "description": "喜家德的品牌形象建立在对“好吃、干净”的极致追求上，通过“一生做好一件事”的匠人精神，塑造出专业、值得信赖的国民水饺品牌。我们的形象代表着对食材的严格把控和传统水饺工艺的传承与创新。",
+        "brand_positioning": {
+          "title": "品牌定位",
+          "description": "喜家德的品牌定位是“中国好水饺”，致力于成为中式快餐连锁的领导品牌，将传统水饺推向世界。我们不仅仅提供美味的餐点，更传递一种健康、安心的生活方式和对传统文化的传承。",
+          "we_believe": {
+            "title": "我们相信：",
+            "points": [
+              "我们相信，好水饺源自真材实料和匠心工艺。",
+              "我们相信，每一份水饺都凝聚着对品质的坚持和对顾客的承诺。"
+            ]
+          },
+          "we_oppose": {
+            "title": "我们反对：",
+            "points": [
+              "我们反对任何形式的食品安全隐患，坚持透明可溯源。",
+              "我们反对偷工减料，不计成本，只为一口好水饺。",
+              "我们反对虚假宣传，一切以产品和顾客体验为核心。"
+            ]
+          },
+          "brand_mission": {
+            "title": "品牌使命",
+            "description": "一生做好一件事，做中国好水饺，让老百姓安心吃饺子。"
+          },
+          "why_choose_us": {
+            "title": "为什么选择我们",
+            "reason": "因为我们坚持“一生做好一件事”的信仰，专注水饺制作20余载，对每一个细节都精益求精。",
+            "statement": "因为我们深知每一份好水饺都承载着对家庭的爱与责任，我们用心做好每一只饺子。",
+            "additional_info": "我们承诺，只用好食材，坚持好工艺，提供放心美味。"
+          }
+        },
+        "brand_expression": {
+          "title": "品牌表达",
+          "description": "喜家德的品牌表达强调现擀、现包、现煮的制作工艺，以及对食材源头的严格把控。通过简洁、明亮的门店设计和透明的厨房，展现“干净”的承诺。在传播上，突出“一字型”水饺的原创性和独特的品牌记忆点，让消费者感受到用心和品质。",
+          "language_style": {
+            "title": "语言风格",
+            "options": [
+              "沉稳",
+              "明朗",
+              "活泼"
+            ]
+          },
+          "brand_slogan": {
+            "title": "你的品牌口号",
+            "slogan": "好吃、干净、一字型水饺"
+          },
+          "color_style": {
+            "title": "色彩风格",
+            "description": "通过选择色彩，定义您的品牌视觉特征，传达独特个性和情感，提升品牌辨识度。喜家德的色彩应体现其健康、美味和现代感的品牌特质。",
+            "palettes": [
+              {
+                "name": "喜家德主色调",
+                "primary_color": "#FF4500",
+                "secondary_color": "#FFD700",
+                "background_color": "#FFFFFF",
+                "secondary_background_color": "#F5F5F5"
+              }
+            ]
+          },
+          "tone": {
+            "title": "调性",
+            "description": "喜家德的品牌调性应传递出国民性、亲和力、专业和信赖感。"
+          },
+          "icon": {
+            "placeholder": ""
+          },
+          "font_layout": {
+            "placeholder": ""
+          },
+          "web_link": {
+            "url": ""
+          }
+        }
+      },
+      "user_personas": {
+        "title": "用户画像",
+        "description": "喜家德的用户画像主要包括注重食品安全和健康的家庭消费者，以及追求快捷美味、对传统美食有偏好的白领人群。他们认可喜家德的品质，信赖品牌的口碑，并将喜家德视为日常用餐或家庭聚餐的优质选择。",
+        "personas": [
+          {
+            "id": "user_persona_1",
+            "title": "家庭型消费者",
+            "avatar": "placeholder_for_avatar_image_1",
+            "name": "陈建国",
+            "age_gender": "35岁 / 男性",
+            "percentage_in_group": "16%",
+            "description": "陈建国是一名公司职员，35岁，已婚，有一个上小学的孩子。",
+            "pain_points": [
+              "担忧外卖食品的卫生和食材质量问题。",
+              "没有足够时间在家准备复杂的餐食。",
+              "市面上餐饮选择多，但真正放心、美味的品牌较少。",
+              "希望找到能满足全家口味的健康选择。"
+            ],
+            "user_characteristics": [
+              {"keyword": "健康导向型", "percentage": "85%"},
+              {"keyword": "实用便捷型", "percentage": "70%"},
+              {"keyword": "家庭责任型", "percentage": "90%"},
+              {"keyword": "传统美食偏好型", "percentage": "75%"}
+            ],
+            "user_scenarios": [
+              "家庭日常晚餐",
+              "周末家庭聚餐",
+              "加班后快速用餐",
+              "亲友小聚"
+            ]
+          },
+          {
+            "id": "user_persona_2",
+            "title": "白领上班族",
+            "avatar": "placeholder_for_avatar_image_2",
+            "name": "李蓉",
+            "age_gender": "28岁 / 女性",
+            "percentage_in_group": "11%",
+            "description": "李蓉是一名互联网公司的设计师，28岁，未婚，注重生活品质。",
+            "pain_points": [
+              "午餐选择有限，希望能有更多健康美味的选择。",
+              "对快餐的卫生状况存在顾虑。",
+              "在快节奏的生活中，很难找到兼顾品质和速度的餐厅。",
+              "希望有舒适的用餐环境，能短暂放松。"
+            ],
+            "user_characteristics": [
+              {"keyword": "效率优先型", "percentage": "80%"},
+              {"keyword": "品质追求型", "percentage": "70%"},
+              {"keyword": "健康意识型", "percentage": "65%"},
+              {"keyword": "社交需求型", "percentage": "40%"}
+            ],
+            "user_scenarios": [
+              "工作日午餐",
+              "加班晚餐",
+              "朋友小聚",
+              "休闲下午茶（非餐饮主营，但可能的需求）"
+            ]
+          }
+        ]
+      }
+    }
+  }
